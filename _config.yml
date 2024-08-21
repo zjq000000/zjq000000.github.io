@@ -75,7 +75,7 @@ ga_domain: huangxuan.me
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
 sidebar-about-description: "要做一个有硬绑绑的站长 <br> React Team @ Meta"
-sidebar-avatar: https://github.com/zjq000000/zjq000000.github.io/blob/master/github-touxiang.png # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: https://cdn.jsdelivr.net/gh/erik00000/hexo-img/img/202408211627376.png # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
 featured-tags: true # whether or not using Feature-Tags
