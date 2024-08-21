@@ -3,7 +3,7 @@ layout: post  # This may vary depending on your blog's theme
 title:  "建立一个github博客,新手必备"
 date:   2024-08-21 16:00:00 -0400
 author:     "wick"
-header-img: "https://cdn.jsdelivr.net/gh/erik00000/hexo-img/img/202406041118617.png"
+header_image: https://cdn.jsdelivr.net/gh/erik00000/hexo-img/img/202406041118617.png
 categories: github博客  # Optional categories
 tags:
     - Life
