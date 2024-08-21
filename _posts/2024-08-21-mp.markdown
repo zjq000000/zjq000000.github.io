@@ -1,0 +1,46 @@
+---
+layout: post  # This may vary depending on your blog's theme
+title:  "建立一个github博客,新手必备"
+date:   2024-08-21 16:00:00 -0400
+author:     "wick"
+header-img: "https://cdn.jsdelivr.net/gh/erik00000/hexo-img/img/202406041118617.png"
+categories: github博客  # Optional categories
+tags:
+    - Life
+---
+## 前言
+
+在互联网时代,拥有一个自己的个人博客已经成为许多人的追求。而GitHub Pages提供了一个免费、简单、强大的博客搭建方式,让每个人都可以拥有一个专属的在线空间。本文将为你详细介绍如何利用GitHub Pages搭建个人博客。
+
+## 什么是GitHub Pages?
+
+GitHub Pages是GitHub提供的一项免费静态网站托管服务。通过GitHub Pages,你可以直接从GitHub仓库中发布网页,无需购买域名和主机。GitHub Pages支持使用Jekyll等静态站点生成器,让博客搭建变得更加简单高效。
+
+## 搭建GitHub Pages博客的步骤
+
+### 1. 创建GitHub账号
+
+首先,你需要注册一个GitHub账号。GitHub是全球最大的代码托管平台,拥有丰富的开源项目资源。
+
+### 2. 创建GitHub仓库
+
+登录GitHub后,创建一个新的仓库。仓库名称必须遵循 `username.github.io` 的格式,其中 `username` 是你的GitHub用户名。
+
+### 3. 选择博客主题
+
+GitHub Pages支持多种主题,你可以选择一个喜欢的主题。你可以在GitHub上搜索"GitHub Pages themes"找到各种免费的主题模板。
+
+### 4. 编写博客内容
+
+在仓库中,创建一个名为 `_posts` 的文件夹,并在其中添加Markdown格式的博文文件。文件名需要遵循 `YYYY-MM-DD-post-title.md` 的格式。
+
+### 5. 设置GitHub Pages
+
+进入仓库的"Settings"页面,向下滚动到"GitHub Pages"部分,选择"Source"为"master branch"或"master branch /docs folder"。保存更改后,你的博客就可以在 `https://username.github.io` 访问了。
+
+## 结语
+
+通过以上5个步骤,你就可以轻松地搭建一个属于自己的GitHub Pages博客了。GitHub Pages不仅免费、简单,而且还提供了丰富的主题选择和强大的Markdown编写功能。赶快行动起来,开始你的博客创作之旅吧!
+
+
+原文代码仓库:https://github.com/Huxpro/huxpro.github.io
