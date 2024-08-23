@@ -1,0 +1,305 @@
+---
+layout: post
+title: "LDNMP再进化 多网站独立NGINX配置 PHP双环境部署"
+subtitle: "LDNMP再进化 多网站独立NGINX配置 PHP双环境部署"
+author: "wick"
+header-style: text
+tags:
+  - LDNMP
+  - Web
+  - PWA
+---
+
+##本文6大LDNMP进阶点：
+
+1.nginx站点独立配置，更灵活，方便管理，更简单
+
+2.不必要端口映射隐藏，提升安全性。
+
+3.PHP双环境部署，对应多类型网站源码适用，兼容性更强！
+
+ （展示WordPress，苹果CMS，独角数卡共存！）
+
+4.所有类型的网站接入Redis，速度更快！
+
+5.每个网站部署独立自己数据库，更好管理，提升性能与安全！
+
+6.支持ARM机型的搭建LDNMP，更强兼容性！
+
+
+
+##更新系统
+
+apt update -y  && apt upgrade -y && apt install -y curl wget sudo socat unzip tar htop
+
+
+
+##安装docker
+
+curl -fsSL https://get.docker.com | sh
+
+curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+chmod +x /usr/local/bin/docker-compose
+
+
+
+##创建目录
+
+cd /home
+
+mkdir web
+
+cd web
+
+mkdir html
+
+mkdir mysql
+
+mkdir certs
+
+mkdir conf.d
+
+mkdir redis
+
+nano docker-compose.yml
+
+
+
+##配置docker-compose
+
+https://github.com/kejilion/docker/blob/main/LNMP-docker-compose-4.yml
+
+
+
+##有些VPS没开端口，先开放端口
+
+iptables -P INPUT ACCEPT
+
+iptables -P FORWARD ACCEPT
+
+iptables -P OUTPUT ACCEPT
+
+iptables -F
+
+
+
+##证书申请
+
+curl https://get.acme.sh | sh
+
+~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d web1.kjlion.link  -d web2.kjlion.link  -d web3.kjlion.link -d web4.kjlion.link -d web5.kjlion.link -d web6.kjlion.link --standalone --key-file /home/web/certs/key.pem --cert-file /home/web/certs/cert.pem  --force
+
+
+
+##nginx站点配置
+
+https://github.com/kejilion/nginx/blob/main/yuming.com.conf
+
+
+
+##下载源码
+
+wordpress
+
+cd /home/web/html/ && mkdir web1 && cd web1 &&  wget https://cn.wordpress.org/wordpress-6.2.2-zh_CN.zip && unzip wordpress-6.2.2-zh_CN.zip && rm wordpress-6.2.2-zh_CN.zip
+
+
+
+##可道云网盘
+
+cd /home/web/html/ && mkdir web2 && cd web2 &&  wget https://static.kodcloud.com/update/download/kodbox.1.42.zip && unzip kodbox.1.42.zip && rm kodbox.1.42.zip
+
+
+
+##discuz论坛/迪库兹论坛
+
+cd /home/web/html/ && mkdir web3 && cd web3 && wget https://github.com/kejilion/Website_source_code/raw/main/Discuz_X3.5_SC_UTF8_20230520.zip && unzip Discuz_X3.5_SC_UTF8_20230520.zip && rm Discuz_X3.5_SC_UTF8_20230520.zip
+
+
+
+##苹果cms
+
+cd /home/web/html && mkdir web4 && cd web4 && wget https://github.com/magicblack/maccms_down/raw/master/maccms10.zip && unzip maccms10.zip && rm maccms10.zip
+
+cd /home/web/html/web4/maccms10-master/template/ && wget https://github.com/kejilion/Website_source_code/raw/main/DYXS2.zip && unzip DYXS2.zip && rm /home/web/html/web4/maccms10-master/template/DYXS2.zip 
+
+cp /home/web/html/web4/maccms10-master/template/DYXS2/asset/admin/Dyxs2.php /home/web/html/web4/maccms10-master/application/admin/controller 
+
+cp /home/web/html/web4/maccms10-master/template/DYXS2/asset/admin/dycms.html /home/web/html/web4/maccms10-master/application/admin/view/system
+
+mv /home/web/html/web4/maccms10-master/admin.php /home/web/html/web4/maccms10-master/vip.php && wget -O /home/web/html/web4/maccms10-master/application/extra/maccms.php https://raw.githubusercontent.com/kejilion/Website_source_code/main/maccms.php
+
+
+
+##独角数卡
+
+cd /home/web/html && mkdir web5 && cd web5 && wget https://github.com/assimon/dujiaoka/releases/download/2.0.6/2.0.6-antibody.tar.gz && tar -zxvf 2.0.6-antibody.tar.gz && rm 2.0.6-antibody.tar.gz
+
+
+
+##Joomla4/乔姆拉4
+
+cd /home/web/html && mkdir web6 && cd web6 && wget https://downloads.joomla.org/cms/joomla4/4-3-3/Joomla_4-3-3-Stable-Full_Package.zip && unzip Joomla_4-3-3-Stable-Full_Package.zip && rm Joomla_4-3-3-Stable-Full_Package.zip
+
+
+
+
+
+##运行
+
+cd /home/web && docker-compose up -d
+
+
+
+##赋予权限
+
+docker exec -it nginx chmod -R 777 /var/www/html
+
+docker exec -it php chmod -R 777 /var/www/html
+
+docker exec -it php74 chmod -R 777 /var/www/html
+
+
+
+##安装PHP扩展，调整上传文件大小限制，内存限制
+
+docker exec php apt update && docker exec php apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick
+
+docker exec php docker-php-ext-install mysqli pdo_mysql zip exif gd intl bcmath opcache
+
+docker exec php pecl install imagick && docker exec php sh -c 'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini'
+
+docker exec php pecl install redis && docker exec php sh -c 'echo "extension=redis.so" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini'
+
+
+
+docker exec php sh -c 'echo "upload_max_filesize=50M \n post_max_size=50M" > /usr/local/etc/php/conf.d/uploads.ini'
+
+docker exec php sh -c 'echo "memory_limit=256M" > /usr/local/etc/php/conf.d/memory.ini'
+
+
+
+##php7.4安装PHP扩展，调整上传文件大小限制，内存限制
+
+docker exec php74 apt update && docker exec php74 apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick
+
+docker exec php74 docker-php-ext-install mysqli pdo_mysql zip gd intl bcmath opcache
+
+docker exec php74 pecl install imagick && docker exec php74 sh -c 'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini'
+
+docker exec php74 pecl install redis && docker exec php74 sh -c 'echo "extension=redis.so" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini'
+
+
+
+docker exec php74 sh -c 'echo "upload_max_filesize=50M \n post_max_size=50M" > /usr/local/etc/php/conf.d/uploads.ini'
+
+docker exec php74 sh -c 'echo "memory_limit=256M" > /usr/local/etc/php/conf.d/memory.ini'
+
+
+
+
+##重启php 
+
+docker restart php
+
+docker restart php74
+
+
+
+##查看php扩展安装情况
+
+docker exec -it php php -m
+
+docker exec -it php74 php -m
+
+
+
+##创建多个新数据库
+
+docker exec -it mysql mysql -u root -p
+
+CREATE DATABASE web1;
+
+CREATE DATABASE web2;
+
+CREATE DATABASE web3;
+CREATE DATABASE web4;
+
+CREATE DATABASE web5;
+
+CREATE DATABASE web6;
+
+
+
+##查看数据库列表
+
+SHOW DATABASES;
+
+
+
+##数据库赋予权限
+
+GRANT ALL PRIVILEGES ON web1.* TO 'kejilion'@'%';
+
+GRANT ALL PRIVILEGES ON web2.* TO 'kejilion'@'%';
+
+GRANT ALL PRIVILEGES ON web3.* TO 'kejilion'@'%';
+
+GRANT ALL PRIVILEGES ON web4.* TO 'kejilion'@'%';
+
+GRANT ALL PRIVILEGES ON web5.* TO 'kejilion'@'%';
+
+GRANT ALL PRIVILEGES ON web6.* TO 'kejilion'@'%';
+
+##查看权限赋予情况
+
+SHOW GRANTS FOR 'kejilion'@'%';
+
+
+
+##删除数据库
+
+DROP DATABASE web3;
+
+REVOKE ALL PRIVILEGES ON web3.* FROM 'kejilion'@'%';
+
+
+
+
+
+
+
+##wp后期配置
+
+echo "define('FS_METHOD', 'direct'); define('WP_REDIS_HOST', 'redis'); define('WP_REDIS_PORT', '6379');" >> /home/web/html/web1/wordpress/wp-config.php
+
+
+
+##苹果CMS后期配置
+
+后台自定义菜单管理主题
+
+电影先生2.0,/vip.php/admin/Dyxs2/dyxs2set
+
+
+
+##定时任务
+
+crontab -e
+
+30 * * * * wget --no-check-certificate -O /dev/null https://mac.kejilion.eu.org/api.php/timming/index.html?enforce=1&name=aa
+
+
+
+##独角数卡后期配置
+
+如果登录时报错再使用该命令，解除HTTPS限制
+
+sed -i 's/ADMIN_HTTPS=false/ADMIN_HTTPS=true/g' /home/web/html/web5/dujiaoka/.env
+
+
+
+##redis日志查看命令
+
+docker exec -it redis redis-cli monitor
